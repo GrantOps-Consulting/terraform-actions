@@ -55,6 +55,9 @@ jobs:
       AWS_REGION: eu-west-1
       TF_ENVIRONMENT: ${{ inputs.environment }}
       TF_DIR: ${{ inputs.working_directory }}
+      TF_VAR_maptiler_api_key: ${{ secrets.TF_MAPTILER_API_KEY || "" }}
+      TF_VAR_here_api_key: ${{ secrets.TF_HERE_API_KEY || "" }}
+      TF_VAR_database_password: ${{ secrets.TF_DATABASE_PASSWORD || "" }}
     defaults:
       run:
         working-directory: ${{ inputs.working_directory }}
@@ -122,6 +125,9 @@ jobs:
       AWS_REGION: eu-west-1
       TF_ENVIRONMENT: ${{ inputs.environment }}
       TF_DIR: ${{ inputs.working_directory }}
+      TF_VAR_maptiler_api_key: ${{ secrets.TF_MAPTILER_API_KEY || "" }}
+      TF_VAR_here_api_key: ${{ secrets.TF_HERE_API_KEY || "" }}
+      TF_VAR_database_password: ${{ secrets.TF_DATABASE_PASSWORD || "" }}
     defaults:
       run:
         working-directory: ${{ inputs.working_directory }}
@@ -153,6 +159,10 @@ jobs:
     if: ${{ inputs.action == 'destroy' }}
     runs-on: ubuntu-latest
     environment: ${{ inputs.environment }}
+    env:
+      TF_VAR_maptiler_api_key: ${{ secrets.TF_MAPTILER_API_KEY || "" }}
+      TF_VAR_here_api_key: ${{ secrets.TF_HERE_API_KEY || "" }}
+      TF_VAR_database_password: ${{ secrets.TF_DATABASE_PASSWORD || "" }}
     defaults:
       run:
         working-directory: ${{ inputs.working_directory }}
@@ -211,6 +221,10 @@ jobs:
     runs-on: ubuntu-latest
     needs: [plan-destroy, destroy-approval]
     environment: ${{ inputs.environment }}
+    env:
+      TF_VAR_maptiler_api_key: ${{ secrets.TF_MAPTILER_API_KEY || "" }}
+      TF_VAR_here_api_key: ${{ secrets.TF_HERE_API_KEY || "" }}
+      TF_VAR_database_password: ${{ secrets.TF_DATABASE_PASSWORD || "" }}
     defaults:
       run:
         working-directory: ${{ inputs.working_directory }}
