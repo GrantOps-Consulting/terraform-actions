@@ -16,6 +16,11 @@ on:
         required: false
         type: string
         default: apply
+      approval_on:
+        description: When to require approval gate (always | dispatch | never)
+        required: false
+        type: string
+        default: dispatch
       role_arn:
         description: Optional AWS role ARN to assume (overrides default constructed ARN or secret)
         required: false
@@ -39,6 +44,10 @@ on:
           - plan
           - apply
           - destroy
+      approval_on:
+        description: When to require approval gate (always | dispatch | never)
+        required: false
+        default: dispatch
       role_arn:
         description: Optional AWS role ARN to assume (overrides default constructed ARN or secret)
         required: false
@@ -116,7 +125,7 @@ jobs:
     if: ${{ inputs.action == 'apply' }}
     runs-on: ubuntu-latest
     needs: [plan]
-    environment: ${{ format('{0}-deploy', inputs.environment) }}
+    environment: ${{ (inputs.approval_on == 'always') && format('{0}-deploy', inputs.environment) || (inputs.approval_on == 'dispatch' && github.event_name == 'workflow_dispatch' && format('{0}-deploy', inputs.environment)) || inputs.environment }}
     steps:
       - name: Await environment approval
         run: echo "Awaiting approval in environment '${{ format('{0}-deploy', inputs.environment) }}'"
@@ -217,7 +226,7 @@ jobs:
     if: ${{ inputs.action == 'destroy' }}
     runs-on: ubuntu-latest
     needs: [plan-destroy]
-    environment: ${{ format('{0}-deploy', inputs.environment) }}
+    environment: ${{ (inputs.approval_on == 'always') && format('{0}-deploy', inputs.environment) || (inputs.approval_on == 'dispatch' && github.event_name == 'workflow_dispatch' && format('{0}-deploy', inputs.environment)) || inputs.environment }}
     steps:
       - name: Await environment approval
         run: echo "Awaiting approval in environment '${{ format('{0}-deploy', inputs.environment) }}'"
